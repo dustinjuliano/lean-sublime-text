@@ -1,0 +1,102 @@
+%YAML 1.2
+---
+name: Lean 4
+file_extensions:
+  - lean
+  - hlean
+scope: source.lean
+contexts:
+  main:
+    - include: comments
+    - include: strings
+    - include: char_literals
+    - include: numbers
+    - include: attributes
+    - include: modifiers
+    - include: keywords
+    - include: commands
+    - include: tactics
+    - include: types
+    - include: operators
+    - include: identifiers
+
+  comments:
+    - match: '--.*$'
+      scope: comment.line.double-dash.lean
+    - match: '/-'
+      scope: punctuation.definition.comment.begin.lean
+      push: block_comment
+
+  block_comment:
+    - meta_scope: comment.block.lean
+    - match: '-/'
+      scope: punctuation.definition.comment.end.lean
+      pop: true
+    - match: '/-'
+      scope: punctuation.definition.comment.begin.lean
+      push: block_comment
+
+  strings:
+    - match: '"'
+      scope: string.quoted.double.lean
+      push: string_body
+
+  string_body:
+    - match: '"'
+      pop: true
+    - match: '\\.'
+      scope: constant.character.escape.lean
+    - match: '.'
+      scope: string.quoted.double.lean
+
+  char_literals:
+    - match: "'(?:[^'\\\\]|\\\\.)'"
+      scope: constant.character.lean
+
+  numbers:
+    - match: '\b0x[0-9a-fA-F]+\b'
+      scope: constant.numeric.hex.lean
+    - match: '\b0o[0-7]+\b'
+      scope: constant.numeric.octal.lean
+    - match: '\b0b[01]+\b'
+      scope: constant.numeric.binary.lean
+    - match: '\b[0-9]+\.[0-9]+\b'
+      scope: constant.numeric.float.lean
+    - match: '\b[0-9]+\b'
+      scope: constant.numeric.integer.lean
+
+  attributes:
+    - match: '@\[[^\]]*\]'
+      scope: meta.attribute.lean
+
+  modifiers:
+    - match: '\b(partial|noncomputable|private|protected|unsafe|builtin|scoped|local)\b'
+      scope: storage.modifier.lean
+
+  keywords:
+    - match: '\b(by|show|have|suffices|let|if|then|else|match|nomatch|in|fun|where|with|deriving|mutual|calc|as|do|return|unless|try|catch|finally|for|break|continue)\b'
+      scope: keyword.control.lean
+    - match: '(λ|⩦|↦)'
+      scope: keyword.control.lean
+
+  commands:
+    - match: '\b(def|definition|theorem|lemma|instance|example|axiom|variable|variables|universe|universes|opaque|constant|abbrev|abbreviation|structure|class|inductive|coinductive|namespace|section|end|open|export|import|theory|prelude|syntax|macro|macro_rules|elab|notation|infix|infixl|infixr|prefix|postfix|attribute|run_cmd|initialize|builtin_initialize|variable|set_option)\b'
+      scope: keyword.declaration.lean
+    - match: '(#check|#eval|#reduce|#print)\b'
+      scope: keyword.other.diagnostic.lean
+
+  tactics:
+    - match: '\b(intro|intros|apply|exact|refine|assumption|rfl|refl|rw|rewrite|simp|dsimp|simp_all|unfold|split|constructor|induction|cases|injection|contradiction|revert|clear|subst|rename|generalize|specialize|by_cases|omega|linarith|ring|aesop|tauto|ext|congr|left|right|fail|sorry|admit|trivial|repeat|focus|all_goals|any_goals|solve_by_elim)\b'
+      scope: keyword.tactic.lean
+
+  types:
+    - match: '\b(Prop|Type|Sort|Nat|Int|Float|String|Char|Bool|List|Option|Array|Unit|Empty|Id|IO|Task)\b'
+      scope: storage.type.lean
+
+  operators:
+    - match: '(->|→|<-|←|=>|⇒|:=|\|=|⊢|::|\+\+|\+|-|\*|/|%|\^|&&|\|\||!|==|!=|<|<=|<=|>=|>|•|∘|⟨|⟩|\\|⊓|⊔|⊔|∈|∉|⊆|⊂|∪|∩)'
+      scope: keyword.operator.lean
+
+  identifiers:
+    - match: '\b[a-zA-Z_][a-zA-Z0-9_''?]*\b'
+      scope: identifier.lean
